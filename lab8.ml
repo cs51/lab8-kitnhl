@@ -124,7 +124,7 @@ decide how to implement this.
   let add_listener (evt : 'a event) (listener : 'a -> unit) : id =
     let this_id = new_id () in
     let waitr = {id = this_id; action = listener} in
-    evt := waitr @ !evt;
+    evt := waitr :: !evt;
     this_id
 
 (*......................................................................
@@ -150,8 +150,8 @@ listening for the event.
 ......................................................................*)
             
   let fire_event (evt : 'a event) (arg : 'a) : unit =
-    List.map (fun wtr -> wtr.action arg) !evt
-    
+    List.iter (fun wtr -> wtr.action arg) !evt
+
 end
   
 (*====================================================================
