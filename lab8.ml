@@ -122,7 +122,10 @@ decide how to implement this.
 ......................................................................*)
                                                    
   let add_listener (evt : 'a event) (listener : 'a -> unit) : id =
-    failwith "WEvent.add_listener not implemented"
+    let this_id = new_id () in
+    let waitr = {id = this_id; action = listener} in
+    evt := waitr @ !evt;
+    this_id
 
 (*......................................................................
 Exercise 2: Write remove_listener, which, given an id and an event,
@@ -131,7 +134,15 @@ one. If there is no listener with that id, do nothing.
 ......................................................................*)
             
   let remove_listener (evt : 'a event) (i : id) : unit =
-    failwith "WEvent.remove_listener not implemented"
+    evt := List.filter (fun wtr -> wtr.id <> i) !evt
+
+    (* let rec helper (evnt : 'a event) (acc : : 'a event) (i : id) =
+      match !evt with
+      | [] -> ()
+      | hd :: tl -> 
+        if hd.id = id then evt := !acc @ tl 
+        else remove_listener (ref tl) (ref (!acc @ )) i in
+    helper evt (ref []) i ;; *)
 
 (*......................................................................
 Exercise 3: Write fire_event, which will execute all event handlers
@@ -139,8 +150,8 @@ listening for the event.
 ......................................................................*)
             
   let fire_event (evt : 'a event) (arg : 'a) : unit =
-    failwith "WEvent.fire_event not implemented"
-
+    List.map (fun wtr -> wtr.action arg) !evt
+    
 end
   
 (*====================================================================
